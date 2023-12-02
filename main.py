@@ -320,15 +320,18 @@ def removal_tools(ytm: Tuple[YTMusic, YTMusic]):
             print("Invalid input!")
 
     while True:
-        print("\nWARNING: These operation are permanent and cannot be undone.")
+        print("\nWARNING: These operations are permanent and cannot be undone.")
         print("Removal tools:")
-        print("  1. Remove saved albums")
+        print("  1. Remove liked songs")
+        print("  2. Remove saved albums")
         print("  0. Back")
         sel = input("Your selection: ")
         match sel:
             case "0":
                 return
             case "1":
+                remove_likes(selected_ytm)
+            case "2":
                 remove_albums(selected_ytm)
             case _:
                 print("Invalid selection:", sel)
