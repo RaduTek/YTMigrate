@@ -22,6 +22,19 @@ def prompt_yes_no(message: str, default_yes: bool = True) -> bool:
             return False
 
 
+def write_backup(data: list | dict, type: str) -> bool:
+    try:
+        backup_date = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+        with open(f"{type}_backup_{backup_date}.json", "w") as backup_file:
+            json.dump(data, backup_file)
+    except Exception as e:
+        print(f"Failed to save backup, {str(e)}!")
+        return False
+    else:
+        print("Backup saved succesfully!")
+        return True
+
+
 def copy_likes(ytm: Tuple[YTMusic, YTMusic]):
     print("Loading liked songs from source account...", end="", flush=True)
     liked_source = ytm[0].get_playlist("LM", limit=5000)
