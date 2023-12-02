@@ -167,11 +167,61 @@ def menu_copy_playlists(ytm: Tuple[YTMusic, YTMusic]):
         return
 
 
+def copy_albums(ytm: Tuple[YTMusic, YTMusic]):
+    print("Loading saved albums from source account...", end="", flush=True)
+    albums_source = ytm[0].get_library_albums(limit=5000)
+    # List of playlistId of all albums from library
+    albums_source_ids = functools.reduce(
+        lambda l, i: l + [i["playlistId"]], albums_source, []
+    )
+
+    print("\rLoading saved albums from destination account...", end="", flush=True)
+    albums_dest = ytm[1].get_library_albums(limit=5000)
+    # List of playlistId of all albums from library
+    albums_dest_ids = functools.reduce(
+        lambda l, i: l + [i["playlistId"]], albums_dest, []
+    )
+
+    print("\r" + " " * 50 + "\r", end="", flush=True)
+
+    albums_to_save = list(set(albums_source_ids) - set(albums_dest_ids))
+
+    if len(albums_to_save) < len(albums_source_ids):
+        print(
+            f"Skipping {len(albums_source_ids) - len(albums_to_save)} out of "
+            f"{len(albums_source_ids)} albums saved!"
+        )
+
+    if len(albums_to_save) == 0:
+        print("No albums left to transfer over!")
+        return
+
+    if not prompt_yes_no(
+        f"Add {len(albums_to_save)} albums to destination account's library?"
+    ):
+        print("Operation cancelled!")
+        return
+
+    try:
+        for index, album_playlist_id in enumerate(albums_to_save):
+            print(
+                f"\rAdding albums to likes... {index + 1}/{len(albums_to_save)}",
+                end="",
+                flush=True,
+            )
+            ytm[1].rate_playlist(album_playlist_id, "LIKE")
+    except Exception as e:
+        print("\nFailed to add albums,", e)
+    else:
+        print("\nTransferred all saved albums successfully!")
+
+
 def menu_main(ytm: Tuple[YTMusic, YTMusic]):
     while True:
         print("\nSelect an option:")
         print("1. Select playlists to copy")
         print("2. Copy likes")
+        print("3. Copy albums")
         print("0. Exit")
         sel = input("Your selection: ")
         match sel:
@@ -181,6 +231,8 @@ def menu_main(ytm: Tuple[YTMusic, YTMusic]):
                 menu_copy_playlists(ytm)
             case "2":
                 copy_likes(ytm)
+            case "3":
+                copy_albums(ytm)
             case _:
                 print("Invalid option:", sel)
 
