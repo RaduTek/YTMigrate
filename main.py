@@ -41,7 +41,7 @@ def copy_likes(ytm: Tuple[YTMusic, YTMusic]):
     if len(songs_to_like) < len(liked_source_ids):
         print(
             f"Skipping {len(liked_source_ids) - len(songs_to_like)} out of "
-            f"{len(liked_source_ids)} songs already liked!"
+            f"{len(liked_source_ids)} songs liked!"
         )
 
     if len(songs_to_like) == 0:
