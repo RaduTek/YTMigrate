@@ -2,6 +2,7 @@ import functools
 import os
 import json
 from typing import Tuple
+from datetime import datetime
 
 import ytmusicapi
 from ytmusicapi import YTMusic, setup_oauth
@@ -215,6 +216,52 @@ def copy_albums(ytm: Tuple[YTMusic, YTMusic]):
     else:
         print("\nTransferred all saved albums successfully!")
 
+
+def remove_albums(ytm: YTMusic):
+    print("\rLoading saved albums from selected account...", end="", flush=True)
+    albums_data = ytm.get_library_albums(limit=5000)
+    # List of playlistId and browseId of all albums from library
+    albums_ids = functools.reduce(
+        lambda l, i: l + [{"playlistId": i["playlistId"], "browseId": i["browseId"]}],
+        albums_data,
+        [],
+    )
+
+    print("\r" + " " * 50 + "\r", end="", flush=True)
+
+    if len(albums_ids) == 0:
+        print("No albums left to remove!")
+        return
+
+    print("Removed album IDs will be saved to a JSON file for safety.")
+    if not prompt_yes_no(
+        f"Remove {len(albums_ids)} albums from the selected account's library?"
+    ):
+        print("Operation cancelled!")
+        return
+
+    try:
+        backup_date = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+        with open(f"albums_backup_{backup_date}.json", "w") as backup_file:
+            json.dump(albums_ids, backup_file)
+    except Exception as e:
+        print(f"Failed to save backup, {str(e)}, aborting!")
+        return
+    else:
+        print("Backup saved succesfully!")
+
+    try:
+        for index, album in enumerate(albums_ids):
+            print(
+                f"\rRemoving albums from library... {index + 1}/{len(albums_ids)}",
+                end="",
+                flush=True,
+            )
+            ytm.rate_playlist(album["playlistId"], "INDIFFERENT")
+    except Exception as e:
+        print("\nFailed to remove albums,", e)
+    else:
+        print("\nRemoved all saved albums successfully!")
 
 def menu_main(ytm: Tuple[YTMusic, YTMusic]):
     while True:
