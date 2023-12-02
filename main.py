@@ -253,15 +253,9 @@ def remove_albums(ytm: YTMusic):
         print("Operation cancelled!")
         return
 
-    try:
-        backup_date = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        with open(f"albums_backup_{backup_date}.json", "w") as backup_file:
-            json.dump(albums_ids, backup_file)
-    except Exception as e:
-        print(f"Failed to save backup, {str(e)}, aborting!")
+    if not write_backup(albums_ids, "removed_albums"):
+        print("Aborting operation!")
         return
-    else:
-        print("Backup saved succesfully!")
 
     try:
         for index, album in enumerate(albums_ids):
