@@ -263,6 +263,32 @@ def remove_albums(ytm: YTMusic):
     else:
         print("\nRemoved all saved albums successfully!")
 
+
+def removal_tools(ytm: Tuple[YTMusic, YTMusic]):
+    selected_ytm = ytm[0]
+    while True:
+        sel = input("Select an account [0=source / 1=destination]: ")
+        if sel == "0" or sel == "1":
+            selected_ytm = ytm[int(sel)]
+            break
+        else:
+            print("Invalid input!")
+
+    while True:
+        print("\nWARNING: These operation are permanent and cannot be undone.")
+        print("Removal tools:")
+        print("  1. Remove saved albums")
+        print("  0. Back")
+        sel = input("Your selection: ")
+        match sel:
+            case "0":
+                return
+            case "1":
+                remove_albums(selected_ytm)
+            case _:
+                print("Invalid selection:", sel)
+
+
 def menu_main(ytm: Tuple[YTMusic, YTMusic]):
     while True:
         print("\nSelect an option:")
