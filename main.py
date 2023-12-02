@@ -98,7 +98,7 @@ def parse_number_ids(selection: str):
 
 def menu_copy_playlists(ytm: Tuple[YTMusic, YTMusic]):
     print("Loading playlists from source account...", end="", flush=True)
-    source_playlists = ytm[0].get_library_playlists()
+    source_playlists = ytm[0].get_library_playlists(100)
     print("\rSelect playlists:" + ' ' * 30)
 
     all_playlists = []
