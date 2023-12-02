@@ -271,6 +271,44 @@ def remove_albums(ytm: YTMusic):
         print("\nRemoved all saved albums successfully!")
 
 
+def remove_likes(ytm: YTMusic):
+    print("Loading liked songs from selected account...", end="", flush=True)
+    liked_data = ytm.get_playlist("LM", limit=5000)
+    liked_ids = functools.reduce(
+        lambda l, i: l + [{"videoId": i["videoId"]}], liked_data["tracks"], []
+    )
+
+    print("\r" + " " * 50 + "\r", end="", flush=True)
+
+    if len(liked_ids) == 0:
+        print("No liked songs left to remove!")
+        return
+
+    print("Removed liked song IDs will be saved to a JSON file for safety.")
+    if not prompt_yes_no(
+        f"Remove {len(liked_ids)} songs from the selected account's likes?"
+    ):
+        print("Operation cancelled!")
+        return
+
+    if not write_backup(liked_ids, "removed_likes"):
+        print("Aborting operation!")
+        return
+
+    try:
+        for index, song in enumerate(liked_ids):
+            print(
+                f"\rRemoving songs from likes... {index + 1}/{len(liked_ids)}",
+                end="",
+                flush=True,
+            )
+            ytm.rate_song(song["videoId"], "INDIFFERENT")
+    except Exception as e:
+        print("\nFailed to remove songs from likes,", e)
+    else:
+        print("\nRemoved all liked songs successfully!")
+
+
 def removal_tools(ytm: Tuple[YTMusic, YTMusic]):
     selected_ytm = ytm[0]
     while True:
