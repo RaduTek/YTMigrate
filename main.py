@@ -291,11 +291,14 @@ def removal_tools(ytm: Tuple[YTMusic, YTMusic]):
 
 def menu_main(ytm: Tuple[YTMusic, YTMusic]):
     while True:
-        print("\nSelect an option:")
-        print("1. Select playlists to copy")
-        print("2. Copy likes")
-        print("3. Copy albums")
-        print("0. Exit")
+        print("\nMain menu:")
+        print("Copy tools:")
+        print("  1. Copy playlists")
+        print("  2. Copy likes")
+        print("  3. Copy albums")
+        print("Other tools:")
+        print("  4. Removal tools")
+        print("  0. Exit")
         sel = input("Your selection: ")
         match sel:
             case "0":
@@ -306,6 +309,8 @@ def menu_main(ytm: Tuple[YTMusic, YTMusic]):
                 copy_likes(ytm)
             case "3":
                 copy_albums(ytm)
+            case "4":
+                removal_tools(ytm)
             case _:
                 print("Invalid option:", sel)
 
